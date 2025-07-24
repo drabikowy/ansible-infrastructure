@@ -21,7 +21,11 @@
 
 {% if varnish_standalone %}
     {# This has to be first line, remember this is not declarative config, we always need the director! #}
-    set req.backend_hint = app_director.backend();
+    if (req.http.host == "{{ mageops_admin_domain }}" ) {
+        set req.backend_hint = app_director.backend(); }
+    else {
+    set req.backend_hint = pwa_director.backend();
+    }
 
     if (req.http.X-Use-Extra-Instance
         {% if aws_extra_app_asg_passthrough_uagent_pattern %}
